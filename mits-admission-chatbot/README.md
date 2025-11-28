@@ -26,9 +26,4 @@ A **rule-based chatbot** built using **Python (Flask)** with an HTML/CSS/JS inte
 
 ---
 
-## 🚀 How to Run Locally
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/Atharv06-08/mits-admission-chatbot.git
-   cd mits-admission-chatbot
