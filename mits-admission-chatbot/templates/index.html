@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>College Chat Assistant</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <style>
+        :root {
+            --bg-gradient: radial-gradient(circle at top left, #ff6fd8, #3813c2 40%, #141414 75%);
+            --card-bg: rgba(15, 15, 30, 0.85);
+            --border-glow: rgba(255, 255, 255, 0.15);
+            --accent: #ff6f91;
+            --accent-soft: rgba(255, 111, 145, 0.25);
+            --accent-2: #4facfe;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --bot-bubble: rgba(31, 41, 55, 0.95);
+            --user-bubble: linear-gradient(135deg, #ff6f91, #ff9a62);
+            --shadow-strong: 0 18px 45px rgba(0, 0, 0, 0.7);
+            --radius-lg: 24px;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: "Poppins", sans-serif;
+            background: var(--bg-gradient);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: var(--text-main);
+        }
+
+        /* ENLARGED CHAT BOX */
+        .chat-shell {
+            width: 100%;
+            max-width: 1100px; /* Increased from 900px */
+            display: grid;
+            grid-template-columns: 3fr 2fr;
+            gap: 26px; /* More spacing */
+        }
+
+        @media (max-width: 900px) {
+            .chat-shell {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chat-card {
+            height: 86vh; /* ENLARGED height */
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-glow);
+            backdrop-filter: blur(18px);
+            box-shadow: var(--shadow-strong);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .chat-window {
+            flex: 1;
+            padding: 20px 24px;
+            overflow-y: auto;
+            color: var(--text-main);
+        }
+
+        .message {
+            display: flex;
+            margin-bottom: 14px;
+            animation: fadeInUp 0.25s ease-out;
+        }
+
+        .message.bot {
+            justify-content: flex-start;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .bubble {
+            padding: 14px 18px;
+            border-radius: 18px;
+            font-size: 1rem;
+            max-width: 88%;
+            line-height: 1.4;
+            word-break: break-word;
+            white-space: pre-wrap;
+        }
+
+        /* UPDATED COLORS FOR BETTER VISIBILITY */
+        .bot .bubble {
+            background: var(--bot-bubble);
+            border: 1px solid rgba(148, 163, 184, 0.6);
+            color: #f3f4f6; /* Lighter color for bot text */
+        }
+
+        .user .bubble {
+            background: var(--user-bubble);
+            color: #111827;
+            font-weight: 600;
+            box-shadow: 0 10px 25px rgba(255, 111, 145, 0.35);
+        }
+
+        .meta-time {
+            font-size: 0.75rem;
+            margin-top: 5px;
+            color: var(--text-muted);
+            text-align: right;
+            user-select: none;
+        }
+
+        .chat-footer {
+            padding: 14px 16px;
+            border-top: 1px solid rgba(148, 163, 184, 0.25);
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-row input {
+            flex: 1;
+            padding: 12px 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.5);
+            background: rgba(15, 23, 42, 0.85);
+            color: var(--text-main);
+            font-size: 1rem;
+            outline-offset: 2px;
+        }
+
+        .input-row input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .send-btn {
+            padding: 12px 18px;
+            border-radius: 999px;
+            border: none;
+            color: #0b1020;
+            background: linear-gradient(135deg, var(--accent-2), var(--accent));
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.3s ease;
+        }
+
+        .send-btn:hover {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        }
+
+        .options-row {
+            margin-top: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .chip-btn {
+            padding: 8px 14px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(148, 163, 184, 0.6);
+            color: var(--text-main);
+            border-radius: 999px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s ease;
+        }
+
+        .chip-btn:hover {
+            background: var(--accent-soft);
+            border-color: var(--accent);
+        }
+
+        /* RIGHT PANEL */
+        .side-card {
+            height: 86vh;
+            padding: 20px;
+            background: rgba(15, 15, 30, 0.95);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(148, 163, 184, 0.6);
+            backdrop-filter: blur(18px);
+            overflow-y: auto;
+            color: var(--text-main);
+        }
+
+        .side-card h3 {
+            margin-bottom: 12px;
+        }
+
+        .side-card p,
+        .side-card ul {
+            color: var(--text-main);
+        }
+
+        .side-card ul li {
+            margin-bottom: 6px;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="chat-shell">
+        <!-- CHAT CARD -->
+        <div class="chat-card">
+            <div class="chat-header">
+                <h3>College Chat Assistant</h3>
+            </div>
+
+            <div class="chat-window" id="chatWindow">
+                {% for msg in chat_history %}
+                    {% if msg.user %}
+                    <div class="message user">
+                        <div class="bubble">
+                            {{ msg.user }}
+                            <div class="meta-time">You</div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="message bot">
+                        <div class="bubble">
+                            {{ msg.bot|safe }}
+                            <div class="meta-time">Bot</div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="chat-footer">
+                <form method="POST" action="{{ url_for('chatbot') }}" class="input-row">
+                    <input type="text" name="query" id="queryInput" placeholder="Type a message..." autocomplete="off" />
+                    <button class="send-btn" type="submit">
+                        Send <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </form>
+
+                <div class="options-row">
+                    {% for opt in options %}
+                    <form method="POST" action="{{ url_for('chatbot') }}">
+                        <input type="hidden" name="query" value="{{ opt }}" />
+                        <button class="chip-btn" type="submit">{{ opt }}</button>
+                    </form>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- SIDE CARD -->
+        <aside class="side-card">
+            <h3>What can this bot do?</h3>
+            <p>Instant answers for students &amp; faculty.</p>
+
+            <ul>
+                <li>Admission details</li>
+                <li>Fees structure</li>
+                <li>Courses offered</li>
+                <li>Faculty info</li>
+            </ul>
+
+            <p><strong>Tip:</strong> Type “back” or “exit”.</p>
+        </aside>
+    </div>
+
+    <script>
+        const chatWindow = document.getElementById("chatWindow");
+        if (chatWindow) chatWindow.scrollTop = chatWindow.scrollHeight;
+    </script>
+</body>
+</html>
