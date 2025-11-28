@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, session, redirect, url_for
 import random
-
+import os
 app = Flask(__name__)
 app.secret_key = "1234567890abcdef"
 
@@ -160,4 +160,5 @@ def chatbot():
 # --- Run app ---
 if __name__ == "__main__":
     app.run(debug=True)
+
 
